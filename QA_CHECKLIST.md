@@ -19,3 +19,13 @@
 - [x] Frontend fallback sang localStorage nếu API chưa được cấu hình.
 - [x] Test tự động trình duyệt: 16 đèn desktop, hover pause, mở quẻ, gửi ước nguyện không có JavaScript error.
 - [x] Test mobile 390×844: chuyển cảnh thành công, 10 đèn, asset chính tải được.
+
+## Cập nhật sender + ảnh quẻ
+- [x] Ảnh quẻ dùng object-fit: contain, không crop/over khung.
+- [x] Có trường Tên người gửi / tên thiết bị, tối đa 60 ký tự.
+- [x] Tên được nhớ lại trên trình duyệt cho lần gửi sau.
+- [x] Local API lưu `sender_name` + `message`.
+- [x] D1 Worker lưu `sender_name` + `message`.
+- [x] CSV có cột `Tên / thiết bị`.
+- [x] TXT local có định dạng `Tên | Ước nguyện`.
+- [x] Dữ liệu cũ thiếu sender_name hiển thị là `Ẩn danh`.

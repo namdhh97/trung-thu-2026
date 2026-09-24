@@ -5,6 +5,7 @@
   const lanternField=$('lanternField'), fortuneModal=$('fortuneModal'), wishModal=$('wishModal'), wishesModal=$('wishesModal');
   const bgMusic=$('bgMusic');
   const LOCAL_KEY='nguyet_dang_wishes_final';
+  const SENDER_KEY='nguyet_dang_sender_name';
   const LANTERN_COUNT=window.innerWidth<560?10:16;
   const LANTERNS=['assets/lanterns/lantern-01.png','assets/lanterns/lantern-02.png','assets/lanterns/lantern-03.png'];
   const FORTUNE_IMAGES=Array.from({length:13},(_,i)=>`assets/fortune/fortune-${String(i+1).padStart(2,'0')}.png`);
@@ -54,26 +55,27 @@
   document.addEventListener('keydown',e=>{if(e.key==='Escape')document.querySelectorAll('.modal.open').forEach(closeModal)});
 
   function localWishes(){try{return JSON.parse(localStorage.getItem(LOCAL_KEY)||'[]')}catch{return[]}}
-  function saveLocal(message){const a=localWishes();a.unshift({id:Date.now(),message,created_at:new Date().toISOString()});localStorage.setItem(LOCAL_KEY,JSON.stringify(a.slice(0,200)));return a[0]}
+  function saveLocal(sender_name,message){const a=localWishes();a.unshift({id:Date.now(),sender_name,message,created_at:new Date().toISOString()});localStorage.setItem(LOCAL_KEY,JSON.stringify(a.slice(0,200)));return a[0]}
   async function checkApi(){try{const res=await fetch('/api/wishes?limit=1',{cache:'no-store'});if(!res.ok)throw 0;apiMode='shared';$('storageHint').textContent='Lời ước sẽ được lưu vào kho chung của mọi người';return true}catch{apiMode='local';$('storageHint').textContent='Chế độ thử nghiệm: lưu trên trình duyệt này';return false}}
   async function fetchWishes(){if(apiMode==='checking')await checkApi();if(apiMode==='shared'){try{const res=await fetch('/api/wishes?limit=200',{cache:'no-store'});if(res.ok){const data=await res.json();return data.wishes||[]}}catch{apiMode='local'}}return localWishes()}
-  async function storeWish(message){if(apiMode==='checking')await checkApi();if(apiMode==='shared'){try{const res=await fetch('/api/wishes',{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({message})});if(res.ok)return{shared:true,data:await res.json()}}catch{}apiMode='local'}return{shared:false,data:saveLocal(message)}}
+  async function storeWish(sender_name,message){if(apiMode==='checking')await checkApi();if(apiMode==='shared'){try{const res=await fetch('/api/wishes',{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({sender_name,message})});if(res.ok)return{shared:true,data:await res.json()}}catch{}apiMode='local'}return{shared:false,data:saveLocal(sender_name,message)}}
   function fmtDate(v){try{return new Date(v).toLocaleString('vi-VN')}catch{return''}}
-  async function renderWishes(){const list=$('wishesList');list.innerHTML='<div class="empty">Đang tải…</div>';const wishes=await fetchWishes();$('wishBadge').textContent=wishes.length;list.innerHTML=wishes.length?wishes.map(w=>`<article class="wish-row"><time>${escapeHtml(fmtDate(w.created_at||w.createdAt))}</time><p>${escapeHtml(w.message||w.text)}</p></article>`).join(''):'<div class="empty">Chưa có ước nguyện nào.</div>'}
-  function csvOf(items){const q=(v)=>'"'+String(v??'').replace(/"/g,'""')+'"';return '\ufeffSTT,Thời gian,Ước nguyện\r\n'+items.map((w,i)=>[i+1,fmtDate(w.created_at||w.createdAt),w.message||w.text].map(q).join(',')).join('\r\n')}
+  async function renderWishes(){const list=$('wishesList');list.innerHTML='<div class="empty">Đang tải…</div>';const wishes=await fetchWishes();$('wishBadge').textContent=wishes.length;list.innerHTML=wishes.length?wishes.map(w=>`<article class="wish-row"><time>${escapeHtml(fmtDate(w.created_at||w.createdAt))}</time><span class="sender">${escapeHtml(w.sender_name||w.senderName||'Ẩn danh')}</span><p>${escapeHtml(w.message||w.text)}</p></article>`).join(''):'<div class="empty">Chưa có ước nguyện nào.</div>'}
+  function csvOf(items){const q=(v)=>'"'+String(v??'').replace(/"/g,'""')+'"';return '\ufeffSTT,Thời gian,Tên / thiết bị,Ước nguyện\r\n'+items.map((w,i)=>[i+1,fmtDate(w.created_at||w.createdAt),w.sender_name||w.senderName||'Ẩn danh',w.message||w.text].map(q).join(',')).join('\r\n')}
   async function exportCsv(){if(apiMode==='checking')await checkApi();if(apiMode==='shared'){try{const res=await fetch('/api/wishes.csv');if(res.ok){download(await res.blob(),'uoc-nguyen-trung-thu.csv');return}}catch{}}const items=await fetchWishes();download(new Blob([csvOf(items)],{type:'text/csv;charset=utf-8'}),'uoc-nguyen-trung-thu.csv')}
   function download(blob,name){const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=name;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(a.href),1000)}
 
   function launchSentLantern(){const img=document.createElement('img');img.className='sent-lantern';img.src=pick(LANTERNS);$('wishFlightLayer').appendChild(img);setTimeout(()=>img.remove(),5700)}
-  async function sendWish(){const input=$('wishInput');const message=normalize(input.value.trim());if(!message){toast('Hãy viết một điều ước trước khi thả đèn nhé 🏮');return}const button=$('sendWishBtn');button.disabled=true;button.textContent='Đang gửi…';const result=await storeWish(message);button.disabled=false;button.textContent='Thả đèn lên trời';input.value='';updateCount();closeModal(wishModal);launchSentLantern();toast(result.shared?'Đã gửi ước nguyện vào kho chung ✨':'Đã lưu ước nguyện trên trình duyệt này ✨');await renderWishes()}
+  async function sendWish(){const sender=$('senderInput');const input=$('wishInput');const sender_name=normalize(sender.value.trim());const message=normalize(input.value.trim());if(!sender_name){toast('Hãy nhập tên người gửi hoặc tên thiết bị nhé');sender.focus();return}if(!message){toast('Hãy viết một điều ước trước khi thả đèn nhé 🏮');input.focus();return}localStorage.setItem(SENDER_KEY,sender_name);const button=$('sendWishBtn');button.disabled=true;button.textContent='Đang gửi…';const result=await storeWish(sender_name,message);button.disabled=false;button.textContent='Thả đèn lên trời';input.value='';updateCount();closeModal(wishModal);launchSentLantern();toast(result.shared?`Đã gửi ước nguyện của ${sender_name} vào kho chung ✨`:`Đã lưu ước nguyện của ${sender_name} trên trình duyệt này ✨`);await renderWishes()}
   function updateCount(){$('wishCount').textContent=`${$('wishInput').value.length}/160`}
 
   $('releaseBtn').addEventListener('click',()=>{startMusic();setScene(flightScene);flightScene.classList.add('is-flying');setTimeout(()=>{flightScene.classList.remove('is-flying');buildLanterns();setScene(palaceScene);toast('Chào mừng bạn đến Cung Trăng ✨')},4100)});
   $('homeBtn').addEventListener('click',()=>{setScene(introScene);toast('Hẹn gặp lại trên Cung Trăng 🌕')});
-  $('writeWishBtn').addEventListener('click',()=>{openModal(wishModal);setTimeout(()=>$('wishInput').focus(),100)});
+  $('writeWishBtn').addEventListener('click',()=>{const sender=$('senderInput');if(!sender.value)sender.value=localStorage.getItem(SENDER_KEY)||'';openModal(wishModal);setTimeout(()=>{(sender.value?$('wishInput'):sender).focus()},100)});
   $('viewWishesBtn').addEventListener('click',async()=>{openModal(wishesModal);await renderWishes()});
   $('refreshWishesBtn').addEventListener('click',renderWishes);$('exportWishesBtn').addEventListener('click',exportCsv);$('sendWishBtn').addEventListener('click',sendWish);$('wishInput').addEventListener('input',updateCount);$('soundBtn').addEventListener('click',toggleMusic);
 
+  $('senderInput').value=localStorage.getItem(SENDER_KEY)||'';
   buildStars();buildLanterns();updateCount();checkApi().then(renderWishes);
   if(new URLSearchParams(location.search).get('scene')==='palace')setScene(palaceScene);
 })();

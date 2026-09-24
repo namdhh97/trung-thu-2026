@@ -5,12 +5,5 @@
   "assets": {
     "directory": "./public",
     "binding": "ASSETS"
-  },
-  "d1_databases": [
-    {
-      "binding": "DB",
-      "database_name": "trung-thu-wishes",
-      "database_id": "168745f8-b8b7-42fa-af6e-56608245d79b"
-    }
-  ]
+  }
 }

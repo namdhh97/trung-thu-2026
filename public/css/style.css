@@ -57,3 +57,48 @@ button,textarea{font:inherit}.app{position:relative;width:100%;height:100dvh;min
 @media(max-width:850px){.app{min-height:560px}.palace-world{top:55%;height:58vh}.palace-img{width:min(68vw,530px)}.bridge{width:250px;left:0}.cuoi{left:5%;width:155px}.orbit{width:330px;height:190px}.orbit img{width:145px}.orbit-rabbit{width:280px}.orbit-rabbit img{width:82px}.fortune-card{grid-template-columns:1fr;height:min(92vh,780px)}.fortune-photo{height:260px}.fortune-body{padding:28px 24px}.palace-river{height:22%}.horizon{bottom:22%}}
 @media(max-width:560px){.sound-btn{right:12px;top:12px}.intro-moon{width:105px}.intro-copy{top:44%}.intro h1{font-size:50px}.intro-river{height:24%}.palace-title{top:2%}.palace-title h2{font-size:38px}.palace-title span{font-size:12px}.sky-glow{width:88vw;top:16%}.palace-world{top:56%;height:53vh}.palace-img{width:82vw;bottom:11%}.bridge{width:175px;height:72px;left:-4%;bottom:8%}.cuoi{width:112px;left:2%;bottom:13%}.orbit{width:235px;height:145px;top:40%}.orbit img{width:110px}.orbit-rabbit{width:205px}.orbit-rabbit img{width:62px}.actions{bottom:2%;gap:6px}.btn{padding:9px 12px;font-size:12px}.sky-lantern{width:64px;height:88px}.sky-lantern img{width:48px;height:68px}.fortune-photo{height:210px}.fortune-body h3{font-size:30px}.fortune-body{padding:24px 18px}.wish-meta{flex-direction:column;text-align:left}.toast{bottom:13%;font-size:12px;max-width:88vw;text-align:center}}
 @media(prefers-reduced-motion:reduce){*,*:before,*:after{animation-duration:.001ms!important;animation-iteration-count:1!important;scroll-behavior:auto!important}}
+
+
+/* ===== Wish sender + fortune image fit ===== */
+.fortune-photo{overflow:hidden;}
+.fortune-photo img{
+  display:block;
+  width:auto !important;
+  height:auto !important;
+  max-width:calc(100% - 8px) !important;
+  max-height:calc(100% - 8px) !important;
+  object-fit:contain !important;
+  object-position:center !important;
+  margin:auto;
+  border-radius:14px;
+}
+.wish-name-label{
+  display:block;
+  margin:12px 0 6px;
+  text-align:left;
+  font-size:12px;
+  font-weight:700;
+  color:#765344;
+}
+.wish-name-input{
+  width:100%;
+  height:44px;
+  padding:0 14px;
+  border:1px solid rgba(111,68,50,.32);
+  border-radius:12px;
+  background:rgba(255,255,255,.46);
+  color:#4f332c;
+  outline:none;
+  font:inherit;
+}
+.wish-name-input:focus,
+.wish-card textarea:focus{
+  border-color:#b27b50;
+  box-shadow:0 0 0 3px rgba(178,123,80,.13);
+}
+.wish-row .sender{
+  display:inline-block;
+  margin-bottom:5px;
+  color:#6f4235;
+  font-weight:800;
+}

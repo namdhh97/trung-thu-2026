@@ -105,3 +105,42 @@ Khi đó:
 - xuất CSV;
 - nhạc nền Trung Thu;
 - responsive desktop/mobile.
+
+## 6. Cập nhật tên người gửi / tên thiết bị
+
+Bản này lưu thêm trường `sender_name` cùng nội dung ước nguyện. Ví dụ:
+
+- Tên / thiết bị: `Namdhh`
+- Ước nguyện: `Mong gia đình luôn bình an...`
+
+Dữ liệu CSV/TXT sẽ có dạng tương ứng để dễ đọc bằng Excel hoặc Notepad.
+
+### Nếu D1 đã tạo bảng `wishes` từ bản cũ
+
+Chạy một lần trong D1 Console:
+
+```sql
+ALTER TABLE wishes ADD COLUMN sender_name TEXT NOT NULL DEFAULT 'Ẩn danh';
+```
+
+Hoặc chạy ở Terminal:
+
+```bash
+npx wrangler d1 execute trung-thu-wishes --remote --file=./migration-add-sender-name.sql
+```
+
+Worker mới cũng có cơ chế kiểm tra và bổ sung cột này tự động khi API được gọi, nhưng chạy migration thủ công trước khi deploy là cách dễ kiểm tra nhất.
+
+Sau đó deploy lại:
+
+```bash
+npx wrangler deploy
+```
+
+Kiểm tra:
+
+```sql
+SELECT id, sender_name, message, created_at
+FROM wishes
+ORDER BY id DESC;
+```
