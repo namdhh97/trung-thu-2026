@@ -1,0 +1,16 @@
+{
+  "name": "trung-thu-2026",
+  "main": "src/worker.js",
+  "compatibility_date": "2026-09-24",
+  "assets": {
+    "directory": "./public",
+    "binding": "ASSETS"
+  },
+  "d1_databases": [
+    {
+      "binding": "DB",
+      "database_name": "trung-thu-wishes",
+      "database_id": "PASTE_DATABASE_ID_HERE"
+    }
+  ]
+}

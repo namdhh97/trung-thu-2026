@@ -1,0 +1,112 @@
+<!doctype html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <meta name="theme-color" content="#08152f" />
+  <title>Nguyệt Đăng – Trung Thu Đoàn Viên</title>
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+  <main class="app" id="app">
+    <div class="stars" id="stars" aria-hidden="true"></div>
+    <button class="sound-btn" id="soundBtn" type="button" aria-label="Bật hoặc tắt nhạc nền">♫</button>
+
+    <section class="scene intro active" id="introScene" aria-label="Đêm Trung Thu">
+      <div class="cloud cloud-1"></div><div class="cloud cloud-2"></div><div class="cloud cloud-3"></div>
+      <div class="intro-moon"></div>
+      <div class="intro-copy">
+        <p class="eyebrow">ĐÊM RẰM THÁNG TÁM</p>
+        <h1>NGUYỆT ĐĂNG</h1>
+        <p class="subtitle">Thả đèn – lên Cung Trăng – mở quẻ chúc đoàn viên</p>
+        <button class="cta" id="releaseBtn" type="button"><span>🏮</span> THẢ ĐÈN ƯỚC NGUYỆN</button>
+        <small>Chạm vào chiếc đèn để bắt đầu hành trình Trung Thu</small>
+      </div>
+      <div class="river intro-river" aria-hidden="true"></div>
+    </section>
+
+    <section class="scene flight" id="flightScene" aria-label="Bay lên Cung Trăng">
+      <div class="flight-moon"></div>
+      <div class="cloud flight-cloud fc1"></div><div class="cloud flight-cloud fc2"></div>
+      <img id="travelerLantern" class="traveler-lantern" src="assets/lanterns/lantern-01.png" alt="Lồng đèn đang bay" />
+      <p>Theo ánh đèn, lên Cung Trăng…</p>
+    </section>
+
+    <section class="scene palace" id="palaceScene" aria-label="Cung Trăng">
+      <header class="palace-title">
+        <p>🌕 Đêm rằm đoàn viên 🌕</p>
+        <h2>CUNG TRĂNG</h2>
+        <span>Những chiếc đèn sẽ bay từ dưới lên trời. Chạm vào một chiếc đèn để nhận quẻ chúc.</span>
+      </header>
+
+      <div class="sky-glow" aria-hidden="true"></div>
+      <div class="palace-world" aria-hidden="true">
+        <img class="palace-img" src="assets/characters/moon-palace.png" alt="" />
+        <img class="bridge" src="assets/characters/bridge.svg" alt="" />
+        <img class="cuoi" src="assets/characters/chu-cuoi.png" alt="" />
+        <div class="orbit orbit-hang"><img src="assets/characters/chi-hang.png" alt="" /></div>
+        <div class="orbit orbit-rabbit"><img src="assets/characters/jade-rabbit.png" alt="" /></div>
+      </div>
+
+      <div class="horizon" aria-hidden="true"></div>
+      <div class="river palace-river" aria-hidden="true"></div>
+      <div class="lantern-field" id="lanternField" aria-label="Lồng đèn nhận quẻ"></div>
+
+      <div class="actions">
+        <button class="btn ghost" id="homeBtn" type="button">↺ Về đêm Trung Thu</button>
+        <button class="btn ghost" id="viewWishesBtn" type="button">📜 Xem ước nguyện <span id="wishBadge" class="badge">0</span></button>
+        <button class="btn primary" id="writeWishBtn" type="button">🏮 Gửi ước nguyện</button>
+      </div>
+    </section>
+
+    <div class="modal" id="fortuneModal" aria-hidden="true">
+      <div class="fortune-card" role="dialog" aria-modal="true" aria-labelledby="fortuneTitle">
+        <button class="modal-close" data-close="fortuneModal" type="button" aria-label="Đóng">×</button>
+        <div class="fortune-photo"><img id="fortuneImage" alt="Ảnh Trung Thu đi kèm quẻ" /><span>Một khoảnh khắc Trung Thu dành cho quẻ của bạn</span></div>
+        <div class="fortune-body">
+          <div class="fortune-motif">☾　✦　☽</div>
+          <p class="fortune-kicker">QUẺ TRĂNG ĐÊM RẰM</p>
+          <h3 id="fortuneTitle">QUẺ AN</h3>
+          <div class="fortune-symbol" id="fortuneSymbol">「 AN 」</div>
+          <blockquote id="fortunePoem"></blockquote>
+          <div class="divider">✦</div>
+          <p class="reading-label">LỜI QUẺ</p>
+          <p class="fortune-message" id="fortuneMessage"></p>
+          <p class="fortune-whisper" id="fortuneWhisper"></p>
+          <div class="fortune-flourish">❦</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="modal" id="wishModal" aria-hidden="true">
+      <div class="wish-card" role="dialog" aria-modal="true" aria-labelledby="wishTitle">
+        <button class="modal-close" data-close="wishModal" type="button" aria-label="Đóng">×</button>
+        <div class="wish-icon">🏮</div>
+        <p class="fortune-kicker">GỬI ƯỚC NGUYỆN</p>
+        <h3 id="wishTitle">Viết điều bạn mong ước</h3>
+        <textarea id="wishInput" maxlength="160" placeholder="Ví dụ: Mong gia đình luôn bình an..."></textarea>
+        <div class="wish-meta"><span id="storageHint">Đang kiểm tra kho ước nguyện…</span><span id="wishCount">0/160</span></div>
+        <button class="btn primary full" id="sendWishBtn" type="button">Thả đèn lên trời</button>
+      </div>
+    </div>
+
+    <div class="modal" id="wishesModal" aria-hidden="true">
+      <div class="wishes-card" role="dialog" aria-modal="true" aria-labelledby="wishesTitle">
+        <button class="modal-close" data-close="wishesModal" type="button" aria-label="Đóng">×</button>
+        <p class="fortune-kicker">KHO ƯỚC NGUYỆN</p>
+        <h3 id="wishesTitle">Những điều ước đã gửi</h3>
+        <div class="wishes-toolbar">
+          <button class="btn ghost" id="refreshWishesBtn" type="button">↻ Làm mới</button>
+          <button class="btn primary" id="exportWishesBtn" type="button">⬇ Tải CSV</button>
+        </div>
+        <div class="wishes-list" id="wishesList"></div>
+      </div>
+    </div>
+
+    <div class="wish-flight-layer" id="wishFlightLayer" aria-hidden="true"></div>
+    <div class="toast" id="toast" role="status" aria-live="polite"></div>
+    <audio id="bgMusic" loop preload="auto"><source src="assets/audio/trung-thu.mp3" type="audio/mpeg" /></audio>
+  </main>
+  <script src="js/app.js"></script>
+</body>
+</html>
