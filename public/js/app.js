@@ -18,6 +18,10 @@
   const PROMO=window.NGUYET_DANG_PROMO||{};
   let soundOn=true, toastTimer=null, apiMode='checking', pendingFortuneTheme=null, currentVoucherClaim='';
   let fortuneMode=localStorage.getItem(FORTUNE_MODE_KEY)||'';
+  const PAGE_PARAMS=new URLSearchParams(location.search);
+  const VOUCHER_TEST_KEY=String(PAGE_PARAMS.get('testVoucher')||'').trim();
+  const IS_LOCAL_TEST=['localhost','127.0.0.1'].includes(location.hostname)&&VOUCHER_TEST_KEY==='1';
+  const IS_REMOTE_TEST=!['localhost','127.0.0.1'].includes(location.hostname)&&!!VOUCHER_TEST_KEY;
 
   const THEMES={
     an:{name:'QUẺ AN',symbol:'「 AN 」',poemA:['Trăng thanh soi lối','Mây nhẹ qua hiên','Gió thu dịu xuống','Đèn vàng soi ngõ'],poemB:['lòng người thêm tĩnh','bình yên ghé gần','muộn phiền dần xa','đường về thêm ấm'],opening:['Nhịp sống của bạn đang cần một khoảng lặng vừa đủ.','Điều khiến bạn băn khoăn sẽ dần sáng rõ khi bạn không ép mình phải giải quyết tất cả cùng lúc.','Một giai đoạn nhẹ nhàng hơn đang mở ra nếu bạn biết giữ nhịp cho chính mình.'],direction:['Hãy ưu tiên điều thực sự quan trọng và bỏ bớt những lo lắng không thuộc trách nhiệm của bạn.','Một cuộc trò chuyện chân thành hoặc một giấc nghỉ đủ sâu sẽ giúp bạn nhìn mọi chuyện khác đi.','Đừng ngại đi chậm hơn một chút để giữ sự cân bằng.'],ending:['Khi lòng yên, hướng đi cũng tự nhiên rõ hơn.','Điều tốt đẹp đang đến theo một cách rất nhẹ nhàng.','Trăng vẫn sáng ngay cả khi đôi lúc mây che.'],whispers:['Tâm an thì trăng nào cũng sáng.','Chậm một chút cũng không sao, miễn là lòng mình không lạc.','Bình yên là khi biết điều gì nên giữ và điều gì nên buông.']},
@@ -83,10 +87,13 @@
   function askFortuneMode(theme){ pendingFortuneTheme=theme||null; openModal($('fortuneModeModal')); }
   async function drawGuestFortune(){
     try{
-      const localTest=['localhost','127.0.0.1'].includes(location.hostname)&&new URLSearchParams(location.search).get('testVoucher')==='1';
-      const res=await fetch('/api/fortune/guest-draw'+(localTest?'?force=1':''),{method:'POST',credentials:'same-origin',cache:'no-store'});
-      if(!res.ok) throw new Error('draw_failed');
-      return await res.json();
+      const headers={};
+      if(IS_REMOTE_TEST) headers['x-voucher-test-key']=VOUCHER_TEST_KEY;
+      const res=await fetch('/api/fortune/guest-draw'+(IS_LOCAL_TEST?'?force=1':''),{method:'POST',credentials:'same-origin',cache:'no-store',headers});
+      const data=await res.json().catch(()=>({}));
+      if(res.status===403&&data?.error==='TEST_KEY_INVALID') return {lucky:false,testError:'Mã test voucher không đúng hoặc Cloudflare Secret chưa được cấu hình.'};
+      if(!res.ok) throw new Error(data?.message||'draw_failed');
+      return data;
     }catch{
       // Không quay voucher bằng frontend để tránh người dùng tự sửa xác suất.
       return {lucky:false,offline:true};
@@ -109,6 +116,8 @@
   function openLuckyVoucher(draw){
     currentVoucherClaim=String(draw?.claim_token||'');
     configureLuckyVoucher();
+    const testBadge=$('luckyTestBadge');
+    if(testBadge) testBadge.hidden=!draw?.test_mode;
     pauseLanterns();
     openModal(luckyVoucherModal);
   }
@@ -117,6 +126,7 @@
     pauseLanterns();
     if(fortuneMode==='guest'){
       const draw=await drawGuestFortune();
+      if(draw?.testError){toast(draw.testError);resumeLanterns();return;}
       if(draw?.lucky){openLuckyVoucher(draw);return;}
       if(draw?.offline) toast('Không kết nối được hệ thống quay voucher; bạn vẫn nhận quẻ thường.');
     }
@@ -244,6 +254,8 @@
   if(hangBubble) hangBubble.addEventListener('click',(e)=>{e.preventDefault();e.stopPropagation();toggleCharacterBubble('hang')});
 
   $('senderInput').value=localStorage.getItem(SENDER_KEY)||'';
+  const testBanner=$('voucherTestBanner');
+  if(testBanner) testBanner.hidden=!(IS_LOCAL_TEST||IS_REMOTE_TEST);
   setGuideOpen(true);
   applyFortuneModeUI();
   configureLuckyVoucher();

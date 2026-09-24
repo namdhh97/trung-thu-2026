@@ -2355,3 +2355,102 @@ input,textarea{font-size:16px;}
     left: 1% !important;
   }
 }
+
+/* ===== FINAL v19: center fortune modal beautifully on phones ===== */
+@media (max-width: 700px) {
+  /* Only the fortune dialog is centered; other forms keep their safe mobile layout. */
+  #fortuneModal {
+    display: grid !important;
+    place-items: center !important;
+    align-items: center !important;
+    justify-items: center !important;
+    padding:
+      max(12px, var(--safe-top))
+      max(10px, var(--safe-right))
+      max(12px, var(--safe-bottom))
+      max(10px, var(--safe-left)) !important;
+    overflow: auto !important;
+  }
+
+  #fortuneModal .fortune-card {
+    width: min(94vw, 540px) !important;
+    max-width: calc(100vw - 20px - var(--safe-left) - var(--safe-right)) !important;
+    max-height: calc(100dvh - 24px - var(--safe-top) - var(--safe-bottom)) !important;
+    margin: auto !important;
+    overflow: auto !important;
+    align-self: center !important;
+    justify-self: center !important;
+  }
+
+  #fortuneModal .fortune-card.fortune-card-text:not(.has-company-image) {
+    min-height: 0 !important;
+  }
+
+  #fortuneModal .fortune-card.fortune-card-text:not(.has-company-image) .fortune-body-centered {
+    min-height: 0 !important;
+    max-height: none !important;
+    overflow: visible !important;
+  }
+
+  /* Company fortune remains image + text, but the complete dialog stays visually centered. */
+  #fortuneModal .fortune-card.has-company-image {
+    max-height: calc(100dvh - 24px - var(--safe-top) - var(--safe-bottom)) !important;
+    overflow-y: auto !important;
+    overflow-x: hidden !important;
+  }
+
+  #fortuneModal .modal-close {
+    position: sticky !important;
+    top: 8px !important;
+    right: 8px !important;
+    margin-left: auto !important;
+    z-index: 10 !important;
+  }
+}
+
+@media (max-width: 390px) {
+  #fortuneModal .fortune-card {
+    width: min(95vw, 430px) !important;
+    max-height: calc(100dvh - 18px - var(--safe-top) - var(--safe-bottom)) !important;
+  }
+}
+
+/* ===== FINAL v20: secure voucher test mode ===== */
+.voucher-test-banner{
+  position:absolute;
+  top:96px;
+  left:50%;
+  z-index:96;
+  transform:translateX(-50%);
+  padding:7px 13px;
+  border:1px solid rgba(255,214,104,.72);
+  border-radius:999px;
+  background:rgba(112,33,30,.92);
+  color:#fff3c4;
+  font:700 11px/1.1 var(--ui);
+  letter-spacing:.04em;
+  box-shadow:0 8px 20px rgba(0,0,0,.24);
+  pointer-events:none;
+}
+.lucky-test-badge{
+  width:max-content;
+  max-width:100%;
+  margin:2px auto 8px;
+  padding:6px 10px;
+  border:1px solid rgba(178,59,45,.24);
+  border-radius:999px;
+  background:#fff0d2;
+  color:#a23f32;
+  font-size:10px;
+  font-weight:800;
+  letter-spacing:.04em;
+}
+@media(max-width:700px){
+  .voucher-test-banner{
+    top:calc(max(6px,var(--safe-top)) + var(--mobile-header-h) + 4px);
+    max-width:88vw;
+    padding:6px 10px;
+    font-size:9px;
+    text-align:center;
+  }
+}

@@ -5,6 +5,7 @@
   "scripts": {
     "start": "node server.mjs",
     "dev": "node server.mjs",
-    "deploy": "wrangler deploy"
+    "deploy": "wrangler deploy",
+    "test:voucher": "node tests/voucher-cloudflare-smoke.mjs"
   }
 }

@@ -58,12 +58,21 @@ function validPhone(phone){return /^\+?[0-9]{9,15}$/.test(phone)}
 export default {async fetch(request,env){const url=new URL(request.url);try{
   if(url.pathname==='/api/fortune/guest-draw'&&request.method==='POST'){
     await ensureDb(env);const ctx=await deviceContext(request);
-    const lucky=isLuckyOnePercent();
-    if(!lucky)return json({lucky:false},200,withDeviceCookie(ctx));
+    const suppliedTestKey=String(request.headers.get('x-voucher-test-key')||'').trim();
+    let testMode=false;
+    if(suppliedTestKey){
+      if(!env.VOUCHER_TEST_KEY || suppliedTestKey!==String(env.VOUCHER_TEST_KEY)){
+        return json({error:'TEST_KEY_INVALID',message:'Mã test voucher không hợp lệ'},403,withDeviceCookie(ctx));
+      }
+      testMode=true;
+    }
+    const lucky=testMode||isLuckyOnePercent();
+    if(!lucky)return json({lucky:false,test_mode:false},200,withDeviceCookie(ctx));
     const claim_token=crypto.randomUUID()+'-'+crypto.randomUUID();
     const created_at=new Date().toISOString();
-    await env.DB.prepare('INSERT INTO voucher_wins(device_hash,claim_token,prize_key,created_at,lead_submitted) VALUES(?,?,?,?,0)').bind(ctx.deviceHash,claim_token,'mid_autumn_voucher',created_at).run();
-    return json({lucky:true,claim_token,prize_key:'mid_autumn_voucher',created_at},200,withDeviceCookie(ctx));
+    const prizeKey=testMode?'test_mid_autumn_voucher':'mid_autumn_voucher';
+    await env.DB.prepare('INSERT INTO voucher_wins(device_hash,claim_token,prize_key,created_at,lead_submitted) VALUES(?,?,?,?,0)').bind(ctx.deviceHash,claim_token,prizeKey,created_at).run();
+    return json({lucky:true,claim_token,prize_key:prizeKey,created_at,test_mode:testMode},200,withDeviceCookie(ctx));
   }
   if(url.pathname==='/api/voucher-leads'&&request.method==='POST'){
     await ensureDb(env);const ctx=await deviceContext(request);let body;try{body=await request.json()}catch{return json({error:'JSON không hợp lệ'},400,withDeviceCookie(ctx))}
