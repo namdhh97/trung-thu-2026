@@ -30,11 +30,61 @@ async function ensureDb(env){
   }
   await env.DB.prepare('CREATE INDEX IF NOT EXISTS idx_wishes_created_at ON wishes(created_at DESC)').run();
   await env.DB.prepare('CREATE INDEX IF NOT EXISTS idx_wishes_device_hash ON wishes(device_hash, id DESC)').run();
+  await env.DB.prepare(`CREATE TABLE IF NOT EXISTS voucher_wins (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    device_hash TEXT NOT NULL,
+    claim_token TEXT NOT NULL UNIQUE,
+    prize_key TEXT NOT NULL DEFAULT 'mid_autumn_voucher',
+    created_at TEXT NOT NULL DEFAULT (datetime('now')),
+    lead_submitted INTEGER NOT NULL DEFAULT 0
+  )`).run();
+  await env.DB.prepare('CREATE INDEX IF NOT EXISTS idx_voucher_wins_device ON voucher_wins(device_hash, id DESC)').run();
+  await env.DB.prepare(`CREATE TABLE IF NOT EXISTS voucher_leads (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    claim_token TEXT NOT NULL UNIQUE,
+    device_hash TEXT NOT NULL,
+    customer_name TEXT NOT NULL DEFAULT '',
+    phone TEXT NOT NULL,
+    created_at TEXT NOT NULL DEFAULT (datetime('now'))
+  )`).run();
+  await env.DB.prepare('CREATE INDEX IF NOT EXISTS idx_voucher_leads_created ON voucher_leads(created_at DESC)').run();
 }
 async function listMine(env,deviceHash,limit=200){await ensureDb(env);limit=Math.max(1,Math.min(Number(limit)||200,500));const {results}=await env.DB.prepare('SELECT id,sender_name,message,created_at FROM wishes WHERE device_hash=? ORDER BY id DESC LIMIT ?').bind(deviceHash,limit).all();return results||[]}
 async function countAll(env){await ensureDb(env);const row=await env.DB.prepare('SELECT COUNT(*) AS total FROM wishes').first();return Number(row?.total||0)}
+function isLuckyOnePercent(){const a=new Uint32Array(1);crypto.getRandomValues(a);return (a[0]/4294967296)<0.01}
+function cleanPhone(raw){return String(raw??'').trim().replace(/[\s().-]/g,'')}
+function validPhone(phone){return /^\+?[0-9]{9,15}$/.test(phone)}
 
 export default {async fetch(request,env){const url=new URL(request.url);try{
+  if(url.pathname==='/api/fortune/guest-draw'&&request.method==='POST'){
+    await ensureDb(env);const ctx=await deviceContext(request);
+    const lucky=isLuckyOnePercent();
+    if(!lucky)return json({lucky:false},200,withDeviceCookie(ctx));
+    const claim_token=crypto.randomUUID()+'-'+crypto.randomUUID();
+    const created_at=new Date().toISOString();
+    await env.DB.prepare('INSERT INTO voucher_wins(device_hash,claim_token,prize_key,created_at,lead_submitted) VALUES(?,?,?,?,0)').bind(ctx.deviceHash,claim_token,'mid_autumn_voucher',created_at).run();
+    return json({lucky:true,claim_token,prize_key:'mid_autumn_voucher',created_at},200,withDeviceCookie(ctx));
+  }
+  if(url.pathname==='/api/voucher-leads'&&request.method==='POST'){
+    await ensureDb(env);const ctx=await deviceContext(request);let body;try{body=await request.json()}catch{return json({error:'JSON không hợp lệ'},400,withDeviceCookie(ctx))}
+    const claim_token=String(body?.claim_token??'').trim();
+    const customer_name=String(body?.customer_name??body?.name??'').trim().normalize('NFC').slice(0,60);
+    const phone=cleanPhone(body?.phone);
+    if(!claim_token)return json({error:'Thiếu mã nhận voucher'},400,withDeviceCookie(ctx));
+    if(!body?.consent)return json({error:'Cần đồng ý để được liên hệ tư vấn'},400,withDeviceCookie(ctx));
+    if(!validPhone(phone))return json({error:'Số điện thoại chưa hợp lệ'},400,withDeviceCookie(ctx));
+    const win=await env.DB.prepare('SELECT id,lead_submitted FROM voucher_wins WHERE claim_token=? AND device_hash=? LIMIT 1').bind(claim_token,ctx.deviceHash).first();
+    if(!win)return json({error:'Voucher không hợp lệ hoặc không thuộc thiết bị này'},403,withDeviceCookie(ctx));
+    const existing=await env.DB.prepare('SELECT id FROM voucher_leads WHERE claim_token=? LIMIT 1').bind(claim_token).first();
+    const created_at=new Date().toISOString();
+    if(existing){
+      await env.DB.prepare('UPDATE voucher_leads SET customer_name=?,phone=?,created_at=? WHERE claim_token=?').bind(customer_name,phone,created_at,claim_token).run();
+    }else{
+      await env.DB.prepare('INSERT INTO voucher_leads(claim_token,device_hash,customer_name,phone,created_at) VALUES(?,?,?,?,?)').bind(claim_token,ctx.deviceHash,customer_name,phone,created_at).run();
+    }
+    await env.DB.prepare('UPDATE voucher_wins SET lead_submitted=1 WHERE claim_token=?').bind(claim_token).run();
+    return json({ok:true},201,withDeviceCookie(ctx));
+  }
   if(url.pathname==='/api/wishes/mine'&&request.method==='GET'){
     const ctx=await deviceContext(request);return json({wishes:await listMine(env,ctx.deviceHash,url.searchParams.get('limit'))},200,withDeviceCookie(ctx));
   }

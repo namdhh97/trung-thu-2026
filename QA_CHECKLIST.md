@@ -36,3 +36,16 @@
 - [x] Có dòng `NHA KHOA SING presents` và slogan Trung Thu.
 - [x] Nút âm thanh được đưa vào header, giữ nguyên id để không ảnh hưởng JS.
 - [x] Header có responsive desktop/tablet/mobile.
+
+## V14 – Lucky Voucher
+- [x] Quẻ voucher chỉ được quay khi fortuneMode = guest.
+- [x] Xác suất 1% được quyết định ở server/Worker, không phải frontend.
+- [x] Người công ty không đi qua API quay voucher.
+- [x] Trúng voucher tạo claim_token gắn với device cookie/hash.
+- [x] Lead callback chỉ lưu khi claim_token thuộc đúng thiết bị.
+- [x] Validate số điện thoại 9–15 chữ số (có thể có +).
+- [x] Có checkbox đồng ý để được liên hệ.
+- [x] Ảnh voucher dùng object-fit: contain.
+- [x] Zalo/hotline có thể cấu hình tại public/js/promo-config.js.
+- [x] Local test: ?testVoucher=1; production Worker không hỗ trợ ép trúng.
+- [x] Test local thành công: forced lucky draw + submit callback lead.

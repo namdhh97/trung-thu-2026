@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="700" viewBox="0 0 1200 700">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#0b1d4d"/><stop offset="1" stop-color="#223b7b"/>
+    </linearGradient>
+    <radialGradient id="moon"><stop offset="0" stop-color="#fff5c9"/><stop offset="1" stop-color="#ffd470"/></radialGradient>
+  </defs>
+  <rect width="1200" height="700" rx="46" fill="url(#bg)"/>
+  <circle cx="920" cy="185" r="118" fill="url(#moon)" opacity=".96"/>
+  <g fill="#ffd98b" opacity=".85"><circle cx="90" cy="100" r="4"/><circle cx="180" cy="165" r="3"/><circle cx="1060" cy="350" r="4"/><circle cx="760" cy="95" r="3"/></g>
+  <text x="90" y="190" fill="#ffe8a6" font-family="Georgia,serif" font-size="72" font-weight="700">QUẺ MAY MẮN</text>
+  <text x="92" y="255" fill="#ffffff" font-family="Arial,sans-serif" font-size="34">VOUCHER TRUNG THU · NHA KHOA SING</text>
+  <rect x="90" y="320" width="640" height="160" rx="28" fill="#ffffff" opacity=".1" stroke="#ffe09a"/>
+  <text x="125" y="390" fill="#fff6dc" font-family="Arial,sans-serif" font-size="34" font-weight="700">THAY ẢNH VOUCHER THẬT TẠI:</text>
+  <text x="125" y="445" fill="#ffd98b" font-family="Arial,sans-serif" font-size="26">public/assets/voucher/voucher.jpg</text>
+  <text x="90" y="590" fill="#d8eaff" font-family="Arial,sans-serif" font-size="25">Tỷ lệ xuất hiện quẻ may mắn: 1%</text>
+</svg>

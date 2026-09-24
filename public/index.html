@@ -2,7 +2,7 @@
 <html lang="vi">
 <head>
   <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
   <meta name="theme-color" content="#08152f" />
   <title>Nguyệt Đăng – Trung Thu Đoàn Viên</title>
   <link rel="stylesheet" href="css/style.css" />
@@ -45,17 +45,19 @@
 
     <section class="scene palace" id="palaceScene" aria-label="Cung Trăng">
       <header class="palace-title">
-        <p><span class="title-chip-icon">🌕</span> Trung thu đoàn viên <span class="title-chip-icon">🌕</span></p>
+        <p><span class="title-chip-icon">🌕</span> Đêm rằm đoàn viên <span class="title-chip-icon">🌕</span></p>
         <h2><span>CUNG TRĂNG</span></h2>
       </header>
 
       <div class="sky-glow" aria-hidden="true"></div>
-      <div class="palace-world" aria-hidden="true">
+      <div class="palace-world">
         <img class="palace-img" src="assets/characters/moon-palace.png" alt="" />
         <img class="bridge" src="assets/characters/bridge.svg" alt="" />
-        <img class="cuoi" src="assets/characters/chu-cuoi.png" alt="" />
-        <div class="orbit orbit-hang"><img src="assets/characters/chi-hang.png" alt="" /></div>
-        <div class="orbit orbit-rabbit"><img src="assets/characters/jade-rabbit.png" alt="" /></div>
+        <img class="cuoi character-trigger" id="characterCuoi" src="assets/characters/chu-cuoi.png" alt="Chú Cuội" role="button" tabindex="0" aria-label="Lời chúc từ Chú Cuội" />
+        <div class="orbit orbit-hang character-trigger" id="characterHang" role="button" tabindex="0" aria-label="Lời chúc từ Chị Hằng">
+          <img class="hang-img" src="assets/characters/chi-hang.png" alt="Chị Hằng" />
+          <img class="jade-rabbit-follow" src="assets/characters/jade-rabbit.png" alt="Thỏ Ngọc" aria-hidden="true" />
+        </div>
       </div>
 
       <div class="horizon" aria-hidden="true"></div>
@@ -70,29 +72,107 @@
         <span class="guide-bubble-tip">Nhấn để ẩn</span>
       </button>
 
+      <button class="character-bubble bubble-cuoi" id="cuoiBubble" type="button" aria-hidden="true" aria-label="Lời chúc của Chú Cuội">
+        <span class="character-bubble-avatar">🎋</span>
+        <span class="character-bubble-content">
+          <strong>Chú Cuội nhắn bạn</strong>
+          <span id="cuoiBubbleText">Chúc bạn một mùa trăng an yên, điều mong đều dần thành thật.</span>
+          <small>Chạm để ẩn lời chúc</small>
+        </span>
+      </button>
+
+      <button class="character-bubble bubble-hang" id="hangBubble" type="button" aria-hidden="true" aria-label="Lời chúc của Chị Hằng">
+        <span class="character-bubble-avatar">🌕</span>
+        <span class="character-bubble-content">
+          <strong>Chị Hằng gửi lời</strong>
+          <span id="hangBubbleText">Chúc bạn đêm rằm dịu dàng, đủ đầy yêu thương và nhiều niềm vui.</span>
+          <small>Chạm để ẩn lời chúc</small>
+        </span>
+      </button>
+
       <div class="actions">
         <button class="btn ghost" id="homeBtn" type="button">↺ Về đêm Trung Thu</button>
+        <button class="btn ghost" id="fortuneModeBtn" type="button">🎴 Chọn loại quẻ</button>
         <button class="btn ghost" id="viewWishesBtn" type="button">📜 Ước nguyện của tôi <span id="wishBadge" class="badge">0</span></button>
         <button class="btn primary" id="writeWishBtn" type="button">🏮 Gửi ước nguyện</button>
       </div>
     </section>
 
     <div class="modal" id="fortuneModal" aria-hidden="true">
-      <div class="fortune-card" role="dialog" aria-modal="true" aria-labelledby="fortuneTitle">
+      <div class="fortune-card fortune-card-text" role="dialog" aria-modal="true" aria-labelledby="fortuneTitle">
         <button class="modal-close" data-close="fortuneModal" type="button" aria-label="Đóng">×</button>
-        <div class="fortune-photo"><img id="fortuneImage" alt="Ảnh Trung Thu đi kèm quẻ" /><span>Một khoảnh khắc Trung Thu dành cho quẻ của bạn</span></div>
-        <div class="fortune-body">
-          <div class="fortune-motif">☾　✦　☽</div>
+        <span class="fortune-corner fortune-corner-tl" aria-hidden="true">☾</span>
+        <span class="fortune-corner fortune-corner-tr" aria-hidden="true">☽</span>
+        <span class="fortune-corner fortune-corner-bl" aria-hidden="true">❦</span>
+        <span class="fortune-corner fortune-corner-br" aria-hidden="true">❦</span>
+        <div class="fortune-image-panel" id="fortuneImagePanel" hidden>
+          <div class="fortune-image-frame">
+            <img id="fortuneImage" src="assets/fortune/fortune-01.png" alt="Ảnh minh họa quẻ Trung Thu" />
+          </div>
+          <span class="fortune-image-caption">Một khoảnh khắc Trung Thu dành cho quẻ của bạn</span>
+        </div>
+        <div class="fortune-body fortune-body-centered">
+          <div class="fortune-topline"><span>☾</span><strong>NGUYỆT ĐĂNG LINH QUẺ</strong><span>☽</span></div>
+          <div class="fortune-moon-seal" aria-hidden="true"><span>月</span></div>
           <p class="fortune-kicker">QUẺ TRĂNG ĐÊM RẰM</p>
           <h3 id="fortuneTitle">QUẺ AN</h3>
           <div class="fortune-symbol" id="fortuneSymbol">「 AN 」</div>
           <blockquote id="fortunePoem"></blockquote>
-          <div class="divider">✦</div>
+          <div class="divider fortune-divider"><span>✦</span></div>
           <p class="reading-label">LỜI QUẺ</p>
           <p class="fortune-message" id="fortuneMessage"></p>
           <p class="fortune-whisper" id="fortuneWhisper"></p>
+          <div class="fortune-blessing">Nguyệt soi tâm ý · Đăng dẫn bình an</div>
           <div class="fortune-flourish">❦</div>
         </div>
+      </div>
+    </div>
+
+    <div class="modal" id="fortuneModeModal" aria-hidden="true">
+      <div class="fortune-mode-card" role="dialog" aria-modal="true" aria-labelledby="fortuneModeTitle">
+        <button class="modal-close" data-close="fortuneModeModal" type="button" aria-label="Đóng">×</button>
+        <p class="fortune-kicker">CHỌN KIỂU GIEO QUẺ</p>
+        <h3 id="fortuneModeTitle">Bạn là người của công ty?</h3>
+        <p class="fortune-mode-note">Nếu là người của công ty, quẻ sẽ có thêm ảnh minh họa. Nếu không, quẻ sẽ hiển thị dạng chữ tinh gọn.</p>
+        <div class="fortune-mode-actions">
+          <button class="btn primary full" id="companyModeBtn" type="button">🏢 Tôi là người của công ty</button>
+          <button class="btn ghost full" id="guestModeBtn" type="button">🌙 Tôi không phải người của công ty</button>
+        </div>
+        <p class="fortune-mode-foot">Bạn có thể đổi lựa chọn này bất cứ lúc nào bằng nút <strong>“Chọn loại quẻ”</strong>.</p>
+      </div>
+    </div>
+
+    <div class="modal" id="luckyVoucherModal" aria-hidden="true">
+      <div class="lucky-voucher-card" role="dialog" aria-modal="true" aria-labelledby="luckyVoucherTitle">
+        <button class="modal-close" data-close="luckyVoucherModal" type="button" aria-label="Đóng">×</button>
+        <div class="lucky-sparkles" aria-hidden="true">✦　✨　✦</div>
+        <p class="lucky-kicker">QUẺ MAY MẮN · TỶ LỆ 1%</p>
+        <h3 id="luckyVoucherTitle">Bạn đã bốc trúng voucher!</h3>
+        <div class="lucky-voucher-image-wrap">
+          <img id="luckyVoucherImage" src="assets/voucher/voucher-placeholder.svg" alt="Voucher Trung Thu may mắn" />
+        </div>
+        <h4 id="luckyPromoTitle">VOUCHER TRUNG THU MAY MẮN</h4>
+        <p class="lucky-description" id="luckyPromoDescription"></p>
+        <div class="lucky-consultant">
+          <span>💬 Người tư vấn</span>
+          <strong id="luckyConsultantName">Tư vấn viên Nha Khoa Sing</strong>
+        </div>
+        <div class="lucky-contact-actions">
+          <a class="btn primary" id="luckyZaloBtn" href="#" target="_blank" rel="noopener">💬 Liên hệ Zalo</a>
+          <a class="btn ghost" id="luckyCallBtn" href="#">☎ Gọi tư vấn</a>
+        </div>
+        <div class="lucky-divider"><span>hoặc để lại số điện thoại</span></div>
+        <label class="wish-name-label" for="voucherNameInput">Tên của bạn</label>
+        <input id="voucherNameInput" class="wish-name-input" maxlength="60" autocomplete="name" placeholder="Ví dụ: Nam" />
+        <label class="wish-name-label" for="voucherPhoneInput">Số điện thoại</label>
+        <input id="voucherPhoneInput" class="wish-name-input" maxlength="20" inputmode="tel" autocomplete="tel" placeholder="Ví dụ: 09xxxxxxxx" />
+        <label class="lucky-consent">
+          <input id="voucherConsent" type="checkbox" />
+          <span>Tôi đồng ý để Nha Khoa Sing liên hệ tư vấn về ưu đãi này.</span>
+        </label>
+        <button class="btn primary full" id="voucherCallbackBtn" type="button">📞 Yêu cầu tư vấn gọi lại</button>
+        <p class="lucky-status" id="luckyStatus" aria-live="polite"></p>
+        <p class="lucky-config-note" id="luckyConfigNote"></p>
       </div>
     </div>
 
@@ -100,8 +180,8 @@
       <div class="wish-card" role="dialog" aria-modal="true" aria-labelledby="wishTitle">
         <button class="modal-close" data-close="wishModal" type="button" aria-label="Đóng">×</button>
         <div class="wish-icon">🏮</div>
-        <p class="fortune-kicker">GỬI ƯỚC NGUYỆN</p> 
-        <h3 id="wishTitle">Ước nguyện của tôi</h3>
+        <p class="fortune-kicker">GỬI ƯỚC NGUYỆN</p>
+        <h3 id="wishTitle">Viết điều bạn mong ước</h3>
         <label class="wish-name-label" for="senderInput">Tên người gửi / tên thiết bị</label>
         <input id="senderInput" class="wish-name-input" maxlength="60" autocomplete="name" placeholder="Ví dụ: Namdhh" />
         <textarea id="wishInput" maxlength="160" placeholder="Ví dụ: Mong gia đình luôn bình an..."></textarea>
@@ -131,6 +211,7 @@
       <span>Thiết kế &amp; phát triển: <strong>Namdhh</strong> · Nguyệt Đăng 2026</span>
     </footer>
   </main>
+  <script src="js/promo-config.js"></script>
   <script src="js/app.js"></script>
 </body>
 </html>

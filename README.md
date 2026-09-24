@@ -97,7 +97,7 @@ Khi đó:
 - lồng đèn thật xuất hiện từ dưới màn hình, bay dần lên trời, vị trí ngang random;
 - hover: dừng chiếc đèn hiện tại và phóng to, không nhấp nháy;
 - bấm đèn để nhận quẻ;
-- 8 chủ đề quẻ: An, Duyên, Trí, Lộc, Phúc, Viên, Nguyện, Tâm;
+- 16 chủ đề quẻ: An, Duyên, Trí, Lộc, Phúc, Viên, Nguyện, Tâm;
 - nội dung quẻ ghép động nên có nhiều tổ hợp;
 - ảnh quẻ random từ bộ ảnh Trung Thu đã cung cấp;
 - không có nút “Nhận quẻ khác”;
@@ -186,3 +186,90 @@ npx wrangler deploy
 ```
 
 Lưu ý: nếu người dùng xóa cookie/site data, đổi trình duyệt hoặc đổi thiết bị thì hệ thống sẽ coi là một thiết bị mới.
+
+## V14 – Quẻ May Mắn Voucher cho Khách
+
+- Chỉ áp dụng khi chọn **Khách / Bên ngoài công ty**.
+- Mỗi lần khách bốc quẻ, Worker quay ngẫu nhiên với xác suất **1%**.
+- Nếu không trúng: hiển thị quẻ chữ như bình thường.
+- Nếu trúng: hiển thị **Quẻ May Mắn** có ảnh voucher, Zalo/hotline và form để lại số điện thoại.
+- Xác suất được quay ở Worker, không quay bằng JavaScript phía trình duyệt.
+- Mỗi lần trúng tạo một `claim_token`; form callback chỉ được lưu nếu mã trúng hợp lệ và thuộc đúng thiết bị.
+
+### Cấu hình voucher / tư vấn viên
+
+Sửa file:
+
+`public/js/promo-config.js`
+
+Các trường chính:
+
+- `image`: đường dẫn ảnh voucher/chương trình khuyến mãi.
+- `consultantName`: tên tư vấn viên.
+- `consultantPhone`: số điện thoại tư vấn.
+- `zaloUrl`: link Zalo, ví dụ `https://zalo.me/09xxxxxxxx`.
+- `title`, `description`: tiêu đề và mô tả ưu đãi.
+
+Bạn có thể chép ảnh thật vào:
+
+`public/assets/voucher/voucher.jpg`
+
+sau đó đổi `image` thành:
+
+`assets/voucher/voucher.jpg`
+
+### D1
+
+Worker có thể tự tạo bảng khi chạy, nhưng với database đang dùng nên chạy migration một lần:
+
+```bash
+npx wrangler d1 execute trung-thu-wishes --remote --file=./migration-lucky-voucher.sql
+```
+
+Sau đó deploy:
+
+```bash
+npx wrangler deploy
+```
+
+Danh sách khách yêu cầu gọi lại nằm trong bảng `voucher_leads`.
+
+SQL kiểm tra:
+
+```sql
+SELECT customer_name, phone, created_at, claim_token
+FROM voucher_leads
+ORDER BY id DESC;
+```
+
+Danh sách quẻ trúng nằm trong `voucher_wins`.
+
+### Test giao diện voucher ở local
+
+Chạy:
+
+```bash
+node server.mjs
+```
+
+Sau đó mở:
+
+`http://localhost:8787/?testVoucher=1`
+
+Chọn **Khách / Bên ngoài công ty**, rồi bốc một quẻ. Chế độ `testVoucher=1` chỉ có tác dụng với server local; Worker production vẫn giữ đúng tỷ lệ 1%.
+
+## Bản FINAL v15 – Responsive toàn thiết bị
+
+Bản này bổ sung một lớp responsive tổng thể ở cuối `public/css/style.css`, tập trung vào:
+
+- desktop rộng >= 1440px;
+- laptop / tablet ngang <= 1100px;
+- tablet dọc / điện thoại lớn <= 850px;
+- điện thoại <= 640px;
+- điện thoại rất nhỏ <= 390px;
+- màn hình thấp và điện thoại xoay ngang;
+- safe-area cho thiết bị có tai thỏ / thanh home;
+- modal quẻ khách, quẻ nhân viên, voucher, gửi/xem ước nguyện;
+- header, Cung Trăng, nhân vật, Thỏ Ngọc, bong bóng chat, gợi ý, đèn lồng và cụm nút chức năng.
+
+`viewport-fit=cover` đã được bật trong `public/index.html`.
