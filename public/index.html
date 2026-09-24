@@ -10,7 +10,18 @@
 <body>
   <main class="app" id="app">
     <div class="stars" id="stars" aria-hidden="true"></div>
-    <button class="sound-btn" id="soundBtn" type="button" aria-label="Bật hoặc tắt nhạc nền">♫</button>
+
+    <header class="brand-header" id="brandHeader" aria-label="Nha Khoa Sing – Nguyệt Đăng Trung Thu 2026">
+      <div class="brand-left" aria-hidden="true"></div>
+      <div class="brand-center">
+        <div class="brand-present"><strong>NHA KHOA SING</strong><span>presents</span></div>
+        <div class="brand-event">NGUYỆT ĐĂNG <span>·</span> TRUNG THU 2026</div>
+        <div class="brand-slogan">Đoàn viên · An lành · Gửi ước nguyện dưới trăng</div>
+      </div>
+      <div class="brand-right">
+        <button class="sound-btn" id="soundBtn" type="button" aria-label="Bật hoặc tắt nhạc nền" title="Nhạc nền Trung Thu">♫</button>
+      </div>
+    </header>
 
     <section class="scene intro active" id="introScene" aria-label="Đêm Trung Thu">
       <div class="cloud cloud-1"></div><div class="cloud cloud-2"></div><div class="cloud cloud-3"></div>
@@ -34,9 +45,8 @@
 
     <section class="scene palace" id="palaceScene" aria-label="Cung Trăng">
       <header class="palace-title">
-        <p>🌕 Đêm rằm đoàn viên 🌕</p>
-        <h2>CUNG TRĂNG</h2>
-        <span>Những chiếc đèn sẽ bay từ dưới lên trời. Chạm vào một chiếc đèn để nhận quẻ chúc.</span>
+        <p><span class="title-chip-icon">🌕</span> Trung thu đoàn viên <span class="title-chip-icon">🌕</span></p>
+        <h2><span>CUNG TRĂNG</span></h2>
       </header>
 
       <div class="sky-glow" aria-hidden="true"></div>
@@ -52,9 +62,17 @@
       <div class="river palace-river" aria-hidden="true"></div>
       <div class="lantern-field" id="lanternField" aria-label="Lồng đèn nhận quẻ"></div>
 
+      <button class="guide-toggle" id="guideToggle" type="button" aria-controls="guideBubble" aria-expanded="true" title="Bật/tắt gợi ý">🏮 <span>Ẩn gợi ý</span></button>
+
+      <button class="guide-bubble" id="guideBubble" type="button" role="note" aria-label="Hướng dẫn nhận quẻ">
+        <span class="guide-bubble-badge">🌙 Gợi ý Trung Thu</span>
+        <span class="guide-bubble-text">Chạm vào một chiếc đèn lồng đang bay để nhận quẻ chúc đoàn viên.</span>
+        <span class="guide-bubble-tip">Nhấn để ẩn</span>
+      </button>
+
       <div class="actions">
         <button class="btn ghost" id="homeBtn" type="button">↺ Về đêm Trung Thu</button>
-        <button class="btn ghost" id="viewWishesBtn" type="button">📜 Xem ước nguyện <span id="wishBadge" class="badge">0</span></button>
+        <button class="btn ghost" id="viewWishesBtn" type="button">📜 Ước nguyện của tôi <span id="wishBadge" class="badge">0</span></button>
         <button class="btn primary" id="writeWishBtn" type="button">🏮 Gửi ước nguyện</button>
       </div>
     </section>
@@ -82,8 +100,8 @@
       <div class="wish-card" role="dialog" aria-modal="true" aria-labelledby="wishTitle">
         <button class="modal-close" data-close="wishModal" type="button" aria-label="Đóng">×</button>
         <div class="wish-icon">🏮</div>
-        <p class="fortune-kicker">GỬI ƯỚC NGUYỆN</p>
-        <h3 id="wishTitle">Viết điều bạn mong ước</h3>
+        <p class="fortune-kicker">GỬI ƯỚC NGUYỆN</p> 
+        <h3 id="wishTitle">Ước nguyện của tôi</h3>
         <label class="wish-name-label" for="senderInput">Tên người gửi / tên thiết bị</label>
         <input id="senderInput" class="wish-name-input" maxlength="60" autocomplete="name" placeholder="Ví dụ: Namdhh" />
         <textarea id="wishInput" maxlength="160" placeholder="Ví dụ: Mong gia đình luôn bình an..."></textarea>
@@ -95,11 +113,11 @@
     <div class="modal" id="wishesModal" aria-hidden="true">
       <div class="wishes-card" role="dialog" aria-modal="true" aria-labelledby="wishesTitle">
         <button class="modal-close" data-close="wishesModal" type="button" aria-label="Đóng">×</button>
-        <p class="fortune-kicker">KHO ƯỚC NGUYỆN</p>
-        <h3 id="wishesTitle">Những điều ước đã gửi</h3>
+        <p class="fortune-kicker">KHO ƯỚC NGUYỆN RIÊNG</p>
+        <h3 id="wishesTitle">Ước nguyện của tôi</h3>
         <div class="wishes-toolbar">
           <button class="btn ghost" id="refreshWishesBtn" type="button">↻ Làm mới</button>
-          <button class="btn primary" id="exportWishesBtn" type="button">⬇ Tải CSV</button>
+          <button class="btn primary" id="exportWishesBtn" type="button">⬇ Tải CSV của tôi</button>
         </div>
         <div class="wishes-list" id="wishesList"></div>
       </div>
@@ -108,6 +126,10 @@
     <div class="wish-flight-layer" id="wishFlightLayer" aria-hidden="true"></div>
     <div class="toast" id="toast" role="status" aria-live="polite"></div>
     <audio id="bgMusic" loop preload="auto"><source src="assets/audio/trung-thu.mp3" type="audio/mpeg" /></audio>
+    <footer class="site-credit" aria-label="Thông tin tác giả">
+      <span class="credit-mark">☾</span>
+      <span>Thiết kế &amp; phát triển: <strong>Namdhh</strong> · Nguyệt Đăng 2026</span>
+    </footer>
   </main>
   <script src="js/app.js"></script>
 </body>

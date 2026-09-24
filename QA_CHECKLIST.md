@@ -29,3 +29,10 @@
 - [x] CSV có cột `Tên / thiết bị`.
 - [x] TXT local có định dạng `Tên | Ước nguyện`.
 - [x] Dữ liệu cũ thiếu sender_name hiển thị là `Ẩn danh`.
+
+## Header thương hiệu
+- [x] Dùng logo Nha Khoa Sing nền trong suốt.
+- [x] Header hiển thị tên sự kiện Nguyệt Đăng – Trung Thu 2026.
+- [x] Có dòng `NHA KHOA SING presents` và slogan Trung Thu.
+- [x] Nút âm thanh được đưa vào header, giữ nguyên id để không ảnh hưởng JS.
+- [x] Header có responsive desktop/tablet/mobile.

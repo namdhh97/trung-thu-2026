@@ -144,3 +144,45 @@ SELECT id, sender_name, message, created_at
 FROM wishes
 ORDER BY id DESC;
 ```
+
+## 6. Header thương hiệu Nha Khoa Sing
+
+Bản này bổ sung header theo phương án thương hiệu + Trung Thu:
+
+- Logo Nha Khoa Sing ở bên trái.
+- Giữa: `NHA KHOA SING presents` và `NGUYỆT ĐĂNG · TRUNG THU 2026`.
+- Slogan: `Đoàn viên · An lành · Gửi ước nguyện dưới trăng`.
+- Nút nhạc nền nằm phía phải header.
+- Header responsive: trên mobile tự rút gọn để không che nội dung chính.
+
+Logo nằm tại:
+
+`public/assets/brand/nha-khoa-sing.png`
+
+
+## Cập nhật: Ước nguyện riêng theo thiết bị
+
+Bản này không công khai toàn bộ kho ước nguyện. Mỗi trình duyệt được Worker cấp một cookie HttpOnly ngẫu nhiên; D1 chỉ lưu SHA-256 hash của mã đó.
+
+- `POST /api/wishes`: gửi ước nguyện của thiết bị hiện tại.
+- `GET /api/wishes/mine`: chỉ đọc ước nguyện của thiết bị hiện tại.
+- `GET /api/wishes/mine.csv`: chỉ xuất CSV của thiết bị hiện tại.
+- `GET /api/wishes/count`: chỉ trả tổng số lời ước, không trả nội dung.
+- `GET /api/wishes` và `/api/wishes.csv`: bị khóa, trả HTTP 403.
+
+Nếu D1 đã có bảng `wishes` từ bản trước, chạy **một lần** trong D1 Console:
+
+```sql
+ALTER TABLE wishes ADD COLUMN device_hash TEXT NOT NULL DEFAULT 'legacy';
+CREATE INDEX IF NOT EXISTS idx_wishes_device_hash ON wishes(device_hash, id DESC);
+```
+
+Hoặc dùng file `migration-device-private.sql`. Dữ liệu cũ được đánh dấu `legacy` và không tự hiển thị cho bất kỳ thiết bị mới nào.
+
+Sau đó deploy lại:
+
+```bash
+npx wrangler deploy
+```
+
+Lưu ý: nếu người dùng xóa cookie/site data, đổi trình duyệt hoặc đổi thiết bị thì hệ thống sẽ coi là một thiết bị mới.
