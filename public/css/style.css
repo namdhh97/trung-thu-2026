@@ -2567,3 +2567,121 @@ input,textarea{font-size:16px;}
   #luckyVoucherModal .lucky-voucher-card h3{ font-size:clamp(22px,8.8vw,33px) !important; }
   #luckyVoucherModal .lucky-voucher-image-wrap{ aspect-ratio:1/1; min-height:0 !important; }
 }
+
+/* ===== FINAL v22: voucher hard viewport containment ===== */
+#luckyVoucherModal,
+#luckyVoucherModal *,
+#luckyVoucherModal *::before,
+#luckyVoucherModal *::after{
+  box-sizing:border-box !important;
+}
+#luckyVoucherModal{
+  width:100vw !important;
+  max-width:100vw !important;
+  height:100dvh !important;
+  min-height:100dvh !important;
+  inset:0 !important;
+  overflow:hidden !important;
+  padding:max(8px,var(--safe-top)) max(8px,var(--safe-right)) max(8px,var(--safe-bottom)) max(8px,var(--safe-left)) !important;
+}
+#luckyVoucherModal .lucky-voucher-card{
+  width:min(760px, calc(100vw - 16px - var(--safe-left) - var(--safe-right))) !important;
+  max-width:min(760px, calc(100vw - 16px - var(--safe-left) - var(--safe-right))) !important;
+  height:auto !important;
+  max-height:calc(100dvh - 16px - var(--safe-top) - var(--safe-bottom)) !important;
+  overflow-x:hidden !important;
+  overflow-y:auto !important;
+  scrollbar-gutter:stable;
+  -webkit-overflow-scrolling:touch;
+  padding:22px 20px 18px !important;
+}
+#luckyVoucherModal .lucky-voucher-card > *{
+  max-width:100% !important;
+}
+#luckyVoucherModal .lucky-voucher-image-wrap{
+  width:100% !important;
+  max-width:720px !important;
+  aspect-ratio:16 / 9 !important;
+  overflow:hidden !important;
+}
+#luckyVoucherModal .lucky-voucher-image-wrap img{
+  display:block !important;
+  width:100% !important;
+  height:100% !important;
+  max-width:100% !important;
+  object-fit:contain !important;
+}
+#luckyVoucherModal .wish-name-label,
+#luckyVoucherModal .wish-name-input,
+#luckyVoucherModal #voucherCallbackBtn,
+#luckyVoucherModal .lucky-description,
+#luckyVoucherModal .lucky-consultant,
+#luckyVoucherModal .lucky-contact-actions,
+#luckyVoucherModal .lucky-divider,
+#luckyVoucherModal .lucky-consent,
+#luckyVoucherModal .lucky-status,
+#luckyVoucherModal .lucky-config-note{
+  width:100% !important;
+  max-width:680px !important;
+  margin-left:auto !important;
+  margin-right:auto !important;
+}
+#luckyVoucherModal .wish-name-input{
+  display:block !important;
+}
+#luckyVoucherModal .lucky-consent{
+  display:flex !important;
+  align-items:flex-start !important;
+  gap:8px !important;
+}
+#luckyVoucherModal .lucky-consent input{
+  flex:0 0 auto !important;
+}
+#luckyVoucherModal .lucky-consent span{
+  min-width:0 !important;
+  overflow-wrap:anywhere !important;
+}
+@media (max-width:700px){
+  #luckyVoucherModal{
+    padding:max(6px,var(--safe-top)) max(6px,var(--safe-right)) max(6px,var(--safe-bottom)) max(6px,var(--safe-left)) !important;
+  }
+  #luckyVoucherModal .lucky-voucher-card{
+    width:calc(100vw - 12px - var(--safe-left) - var(--safe-right)) !important;
+    max-width:calc(100vw - 12px - var(--safe-left) - var(--safe-right)) !important;
+    max-height:calc(100dvh - 12px - var(--safe-top) - var(--safe-bottom)) !important;
+    padding:16px 12px 14px !important;
+    border-radius:20px !important;
+    scrollbar-gutter:auto;
+  }
+  #luckyVoucherModal .lucky-voucher-image-wrap{
+    aspect-ratio:16 / 9 !important;
+    padding:8px !important;
+  }
+  #luckyVoucherModal .lucky-voucher-card h3{
+    font-size:clamp(25px,8.2vw,36px) !important;
+    overflow-wrap:anywhere !important;
+  }
+}
+@media (max-width:390px){
+  #luckyVoucherModal .lucky-voucher-card{
+    width:calc(100vw - 10px - var(--safe-left) - var(--safe-right)) !important;
+    max-width:calc(100vw - 10px - var(--safe-left) - var(--safe-right)) !important;
+    max-height:calc(100dvh - 10px - var(--safe-top) - var(--safe-bottom)) !important;
+    padding:14px 10px 12px !important;
+  }
+  #luckyVoucherModal .lucky-voucher-image-wrap{
+    aspect-ratio:16 / 10 !important;
+  }
+}
+@media (max-width:350px){
+  #luckyVoucherModal .lucky-voucher-card{
+    padding:12px 8px 10px !important;
+  }
+  #luckyVoucherModal .lucky-voucher-card h3{
+    font-size:clamp(22px,8vw,29px) !important;
+  }
+  #luckyVoucherModal .lucky-voucher-image-wrap{
+    aspect-ratio:4 / 3 !important;
+    padding:6px !important;
+  }
+}

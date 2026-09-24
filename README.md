@@ -273,3 +273,9 @@ Bản này bổ sung một lớp responsive tổng thể ở cuối `public/css/
 - header, Cung Trăng, nhân vật, Thỏ Ngọc, bong bóng chat, gợi ý, đèn lồng và cụm nút chức năng.
 
 `viewport-fit=cover` đã được bật trong `public/index.html`.
+
+
+## FINAL v22 — Voucher viewport containment
+- Fix overflow do box model/padding trên mobile.
+- Modal voucher luôn nằm trong 100dvh; cuộn dọc bên trong card.
+- Voucher/form/button fit 320px+ và desktop/tablet.
